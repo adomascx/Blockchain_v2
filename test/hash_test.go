@@ -44,10 +44,7 @@ func TestHashDictionary(t *testing.T) {
 
 	for _, word := range words {
 		// hash the word
-		hash, err := lib.Hash(word)
-		if err != nil {
-			t.Errorf("could not do Hash(%v): %v", word, err)
-		}
+		hash := lib.PHA256([]byte(word))
 
 		// if it's in the hashmap already, it's a duplicate
 		if hashMap[hash] != "" {

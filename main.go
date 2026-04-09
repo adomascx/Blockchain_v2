@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
 	"github.com/adomascx/Blockchain_v2/lib"
 )
 
 func main() {
-	fmt.Println(lib.Hash("this is a test"))
+	scanner := bufio.NewScanner(os.Stdin)
 
+	for scanner.Scan() {
+		fmt.Println(lib.PHA256([]byte(scanner.Text())))
+	}
 }
