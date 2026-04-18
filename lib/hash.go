@@ -4,27 +4,40 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"strconv"
 )
 
-// floatToUint returns an 128-bit big int representation of float x.
-func floatToUint(x float64) big.Int {
+// normalize returns the float x shifted to the range [1, 10)
+func normalize(x *float64) {
+	// Normalizuojame skaiciu į [1, 10), kad pirmasis išgaunamas skaitmuo būtų vienetų vietoje
+	// Pvz., 12.3 -> 1.23, 0.123 -> 1.23
+	*x /= math.Pow(10, float64(math.Floor(math.Log10(*x))))
+}
+
+// floatToUint returns a hex-encoded string of the first 32 digits of x
+func floatToUint(x float64) string {
+	// Mažiausia ir didžiausia leidžiamos išvesties reikšmės yra 0x10000... ir 0xFFFFF...
+	// Desimtaineje sistemoje tai lygu 2.12 x 10^37 ir 34.02 x 10^37
+
 	// Atsikratome minuso ženklo
 	x = math.Abs(x)
 
-	// Normalizuojame modulį į [1, 10), kad pirmasis išgaunamas skaitmuo būtų vienetų vietoje
-	// Pvz., 12.3 -> 1.23, 0.123 -> 1.23
-	x = x / math.Pow10(int(math.Floor(math.Log10(x))))
+	// Normalizuojame skaiciu į [1, 10), kad pirmasis išgaunamas skaitmuo būtų vienetų vietoje
+	normalize(&x)
 
-	// Konvertuojame float skaiciu i hex reiksme
-	// Maziausia ir didziausia leidziamos isvesties reiksmes yra 0x10000... ir 0xFFFFF...
-	// Desimtaineje sistemoje tai lygu 2.12 x 10^37 ir 34.02 x 10^37
-	// Tokiu veiksmu isitikiname, kad skaicius kris isvesties ribose
-	x = x * 3 * math.Pow10(37-16)
-	fmt.Printf("float64 value of x is: %v\n", x)
+	// Italpiname i riba tarp 2.12 ir 34.02
+	x *= 3
 
-	s := fmt.Sprintf("%.0f", x)
-	var output big.Int
-	output.SetString(s, 10)
+	// Dedame skaitmenis i isvesties string
+	output := ""
+	for i := 0; i < 38; i++ {
+		// Paimame pirmą skaitmenį (0..9)
+		digit := uint64(x)
+		// Pridedame skaitmenį prie išvesties string
+		output += strconv.FormatUint(digit, 10)
+		// Atsikratome dabartinio skaitmens ir perkeliame kitą į vienetų vietą
+		x = (x - float64(digit)) * 10
+	}
 
 	return output
 }
@@ -41,8 +54,11 @@ func PHA256(input []byte) string {
 		y += math.Sin(float64(v))
 	}
 
-	hashedX := floatToUint(x)
-	hashedY := floatToUint(y)
+	hashedX := new(big.Int)
+	hashedY := new(big.Int)
 
-	return fmt.Sprintf("%x %x", &hashedX, &hashedY)
+	hashedX.SetString(floatToUint(x), 10)
+	hashedY.SetString(floatToUint(y), 10)
+
+	return fmt.Sprintf("%x%x", hashedX, hashedY)
 }

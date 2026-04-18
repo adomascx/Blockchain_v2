@@ -12,6 +12,8 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for scanner.Scan() {
-		fmt.Println(lib.PHA256([]byte(scanner.Text())))
+		hash := lib.PHA256([]byte(scanner.Text()))
+		fmt.Printf("Hash: %v\n", hash)
 	}
+
 }
