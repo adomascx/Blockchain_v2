@@ -5,7 +5,6 @@ import (
 	"math"
 	"math/big"
 	"strconv"
-	"strings"
 )
 
 // normalize returns the float x shifted to the range [1, 10)
@@ -46,18 +45,16 @@ func floatToUint(x float64) string {
 // PHA256 - self-made, performant hash algorithm.
 // Returns a 256-bit hash of input in hex.
 func PHA256(input []byte) string {
-	// Tuscios investies atveju
-	if len(input) == 0 {
-		return strings.Repeat("0", 64)
-	}
 
-	// Pradėti nuo koordinačių (0,0)
-	var x, y float64 = 0, 0
+	// Pradėti nuo koordinačių (1,1)
+	// Pradedant nuo nenulinių koord. išvengiama tuščios įvesties problemų
+	var x, y float64 = 1, 1
 
 	// Kiekvienas simbolis prideda 1 ilgio "švytuoklę" (pendulum) tam tikru kampu, kur kampas = a (radianais).
-	for _, v := range input {
-		x += math.Cos(float64(v))
-		y += math.Sin(float64(v))
+	// Taip pat pridėtas maišymas pagal ciklo indeksą i
+	for i, v := range input {
+		x += math.Cos(float64(v) + float64(i*5))
+		y += math.Sin(float64(v) + float64(i*3))
 	}
 
 	hashedX := new(big.Int)
