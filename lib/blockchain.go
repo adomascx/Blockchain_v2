@@ -6,4 +6,20 @@ type Transaction struct {
 	// inputs map[string]string
 	// outputs map[string]string
 	transactionId string
+
+	// input
+
+}
+type UTXO struct {
+	value float64
+	id    string
+}
+
+type Wallet struct {
+	address string
+	utxos   []UTXO
+}
+
+func newTransaction(owner string, amount int) Transaction {
+	return Transaction{}
 }

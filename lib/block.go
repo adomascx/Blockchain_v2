@@ -17,26 +17,34 @@ type Block struct {
 }
 
 func NewBlock(transactions []Transaction, prev_block_hash, version string, difficulty_target, nonce int) (Block, error) {
-	panic("TODO: implement constructor")
+	// TODO: implement constructor
+	return Block{}, nil
+
 }
 
 // Calculate Merkle root of the block's transactions.
 func (b Block) calculateMerkleRoot() string {
+	// handle block w/o transactions
 	if len(b.transactions) == 0 {
 		return PHA256([]byte(""))
 	}
 
+	// initialize merkle tree with tx ids as leaves
 	var level []string
 	for _, tx := range b.transactions {
 		level = append(level, tx.transactionId)
 	}
 
 	for len(level) > 1 {
+		// if block contains odd number of txs, duplicate last tx id
 		if len(level)%2 == 1 {
-			level = append(level, level[len(level)-1])
+			lastIdx := len(level) - 1
+			level = append(level, level[lastIdx])
 		}
 
+		// build higher merkle tree level
 		var nextLevel []string
+		// concat pairs of ids, then hash the result into new level
 		for i := 0; i < len(level); i += 2 {
 			combined := level[i] + level[i+1]
 			nextLevel = append(nextLevel, PHA256([]byte(combined)))
@@ -45,9 +53,4 @@ func (b Block) calculateMerkleRoot() string {
 	}
 
 	return level[0]
-}
-
-// getter for block's header.
-func (b Block) GetHeader() map[string]string {
-
 }
