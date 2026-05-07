@@ -11,7 +11,7 @@ import (
 	"github.com/adomascx/Blockchain_v2/lib"
 )
 
-func ReadDictFile(path string) ([]string, error) {
+func readDictFile(path string) ([]string, error) {
 	var words []string
 
 	file, err := os.Open(path)
@@ -30,13 +30,12 @@ func ReadDictFile(path string) ([]string, error) {
 }
 
 func TestHashCollisions(t *testing.T) {
-	// Print hash with the error or not
-	const verbose = false
-	// read dictionary text file into string array
-	const dictPath = "words_alpha.txt"
-	words, err := ReadDictFile(dictPath)
+	const verbose = false              // Whether to also print the hash in the error
+	const dictPath = "words_alpha.txt" // Path to text file with line-separated words
+
+	words, err := readDictFile(dictPath)
 	if err != nil {
-		t.Errorf("could not do ReadDictFile(%v): %v", dictPath, err)
+		t.Errorf("could not do readDictFile(%v): %v", dictPath, err)
 	}
 
 	// a reverse hash map (hash -> word)

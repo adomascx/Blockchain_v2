@@ -30,7 +30,7 @@ func floatToUint(x float64) string {
 
 	// Dedame skaitmenis i isvesties string
 	output := ""
-	for i := 0; i < 38; i++ {
+	for range 38 {
 		// Paimame pirmą skaitmenį (0..9)
 		digit := uint64(x)
 		// Pridedame skaitmenį prie išvesties string

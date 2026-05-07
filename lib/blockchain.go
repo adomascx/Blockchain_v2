@@ -2,9 +2,8 @@ package lib
 
 // Represents a transaction with I/O and ID (UTXO model).
 type Transaction struct {
-	// TODO: implement correctly
-	// inputs map[string]string
-	// outputs map[string]string
+	inputs        []string
+	outputs       []map[string]any
 	transactionId string
 
 	// input
@@ -21,5 +20,10 @@ type Wallet struct {
 }
 
 func newTransaction(owner string, amount int) Transaction {
+	return Transaction{}
+}
+
+// TODO: make explicit param type
+func (t Transaction) fromDict(payload any) Transaction {
 	return Transaction{}
 }
